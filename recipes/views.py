@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from .services import get_recipes_list, Recipe, get_recipe_details_or_none
 from typing import Union
+from django.shortcuts import render
 
 
 ADDITIONAL_STYLES = """<style>
@@ -16,12 +17,12 @@ div {
 
 def recipes_list(request: HttpRequest) -> HttpResponse:
     recipes: list = get_recipes_list()
-    html: str = ""
 
-    for recipe_data in recipes:
-        html += str(Recipe(**recipe_data))
+    context = {
+        "recipes": recipes
+    }
 
-    return HttpResponse(html + ADDITIONAL_STYLES)
+    return render(request, "recipes.html", context=context)
 
 
 def recipe_details(request: HttpRequest, recipe_id: int) -> HttpResponse:
