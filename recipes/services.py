@@ -13,10 +13,10 @@ class Recipe:
 
     def __str__(self) -> str:
         recipe_link: str = self.get_recipe_link()
-        linked_name: str = get_html_link(recipe_link, self.name)
-        html_title: str = get_html_header(linked_name)
-        html_description: str = get_html_paragraph(self.description)
-        return get_html_container(html_title + html_description)
+        linked_name: str = HTMLElement(self.name).link(recipe_link)
+        html_title: str = HTMLElement(linked_name).header()
+        html_description: str = HTMLElement(self.description).paragraph()
+        return HTMLElement(html_title + html_description).container()
 
     def get_recipe_link(self) -> str:
         return reverse("recipe-details", kwargs={"recipe_id": self.id})
@@ -36,17 +36,18 @@ def get_recipe_details_or_none(recipe_id: int) -> Union[None, Recipe]:
     return None
 
 
-def get_html_header(text: str, level: int = 2) -> str:
-    return f"<h{level}>{text}</h{level}>"
+class HTMLElement:
+    def __init__(self, text: str):
+        self.text = text
 
+    def link(self, href: str) -> str:
+        return f'<a href="{href}">{self.text}</a>'
 
-def get_html_paragraph(text: str) -> str:
-    return f"<p>{text}</p>"
+    def container(self) -> str:
+        return f"<div>{self.text}</div>"
 
+    def paragraph(self) -> str:
+        return f"<p>{self.text}</p>"
 
-def get_html_container(text: str) -> str:
-    return f"<div>{text}</div>"
-
-
-def get_html_link(href: str, text: str) -> str:
-    return f'<a href="{href}">{text}</a>'
+    def header(self, level: int = 2) -> str:
+        return f"<h{level}>{self.text}</h{level}>"
