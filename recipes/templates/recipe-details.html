@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Recipes</title>
+    <title>Recipes - {{ recipe.name }}</title>
   </head>
   <body>
-    <h1>Recipes</h1>
+    <h1>{{ recipe.name }}</h1>
 
-    {% for recipe in recipes %}
     <article>
       <h2>{{recipe.name}}</h2>
       <p>{{recipe.description}}</p>
+
+      {% if recipe.сooking_time %}
+      <p>{{recipe.сooking_time}}</p>
+      {% endif %}
+      
     </article>
-    {% endfor %}
 
     <style>
       * {

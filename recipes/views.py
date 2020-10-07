@@ -1,36 +1,17 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
-from .services import get_recipes_list, Recipe, get_recipe_details_or_none
 from typing import Union
-from django.shortcuts import render
-
-
-ADDITIONAL_STYLES = """<style>
-div {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px 10px;
-  border-bottom: 1px solid black;
-  font-family: 'Roboto', sans-serif;
-}
-</style>"""
+from django.shortcuts import render, get_object_or_404
+from .models import Recipe
 
 
 def recipes_list(request: HttpRequest) -> HttpResponse:
-    recipes: list = get_recipes_list()
+    recipes = Recipe.objects.all()
 
-    context = {
-        "recipes": recipes
-    }
-
-    return render(request, "recipes.html", context=context)
+    return render(request, "recipes.html", context={"recipes": recipes})
 
 
 def recipe_details(request: HttpRequest, recipe_id: int) -> HttpResponse:
-    recipe: Union[Recipe, None] = get_recipe_details_or_none(recipe_id)
+    # recipe = Recipe.objects.get(id=recipe_id)
+    recipe = get_object_or_404(Recipe, id=recipe_id)
 
-    if recipe is None:
-        return HttpResponseNotFound("Recipe not found!")
-
-    html = str(recipe)
-
-    return HttpResponse(html + ADDITIONAL_STYLES)
+    return render(request, "recipe-details.html", context={"recipe": recipe})
